@@ -7,13 +7,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log; // Import for logging
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
-
 
 public class StartingScreenActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_QUIZ = 1;
@@ -39,12 +39,21 @@ public class StartingScreenActivity extends AppCompatActivity {
         loadCategories();
         loadDifficultyLevels();
         loadHighScore();
+
         Button buttonStartQuiz = findViewById(R.id.button_start_quiz);
         buttonStartQuiz.setOnClickListener(v -> startQuiz());
+
         Button buttonAddQuestion = findViewById(R.id.button_add_question);
         buttonAddQuestion.setOnClickListener(v -> {
             Intent intent = new Intent(StartingScreenActivity.this, AddQuestionActivity.class);
             startActivity(intent);
+        });
+
+        //Set up the Log Out button
+        Button buttonLogOut = findViewById(R.id.button_log_out);
+        buttonLogOut.setOnClickListener(v -> {
+            logOut();
+            Log.d("StartingScreenActivity", "Log Out button clicked");
         });
     }
 
@@ -107,5 +116,18 @@ public class StartingScreenActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_HIGHSCORE, highscore);
         editor.apply();
+    }
+
+    private void logOut() {
+        // Clear the login state from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("login_pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("is_logged_in", false);
+        editor.apply();
+
+        // Redirect to the login activity
+        Intent intent = new Intent(StartingScreenActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

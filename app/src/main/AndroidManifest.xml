@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,20 +11,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizWhiz"
         tools:targetApi="31">
-        <activity
-            android:name=".QuizActivity"
-            android:exported="false" />
-        <activity android:name=".AddQuestionActivity" />
 
+        <!-- Login screen as launcher activity -->
         <activity
-            android:name=".StartingScreenActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- Other activities -->
+        <activity android:name=".QuizActivity" android:exported="false" />
+        <activity android:name=".AddQuestionActivity" />
+
+        <!-- StartingScreenActivity without MAIN and LAUNCHER intent -->
+        <activity
+            android:name=".StartingScreenActivity"
+            android:exported="true" />
+
     </application>
 
 </manifest>
