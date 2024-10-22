@@ -7,7 +7,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Logo at the top -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,12 +17,20 @@
         android:textSize="35sp"
         tools:ignore="HardcodedText" />
 
-    <!-- Space between logo and input fields -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="05dp"
+        android:text="To Improve Yourself, Take a Step Forward"
+        android:textColor="@android:color/black"
+        android:textSize="12sp"
+        tools:ignore="HardcodedText" />
+
     <Space
         android:layout_width="wrap_content"
         android:layout_height="150dp" />
 
-    <!-- Name input -->
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
@@ -31,7 +38,6 @@
         android:hint="Enter your name"
         android:padding="10dp" />
 
-    <!-- Email input -->
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
@@ -40,7 +46,6 @@
         android:inputType="textEmailAddress"
         android:padding="10dp" />
 
-    <!-- Space between inputs and button -->
     <Space
         android:layout_width="wrap_content"
         android:layout_height="16dp" />
