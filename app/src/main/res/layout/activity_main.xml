@@ -85,6 +85,7 @@
         android:textColor="@android:color/black"
         tools:ignore="HardcodedText" />
 
+    <!--    log out button added-->
     <Button
         android:id="@+id/button_log_out"
         android:layout_width="match_parent"
