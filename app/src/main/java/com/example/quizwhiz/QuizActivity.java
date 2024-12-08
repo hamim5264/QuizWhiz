@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,6 +41,10 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
+        // Set the secure flag to prevent screenshots
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        setContentView(R.layout.activity_quiz);
+
         // Initialize views
         textViewQuestion = findViewById(R.id.text_view_question);
         textViewScore = findViewById(R.id.text_view_score);
@@ -47,6 +52,7 @@ public class QuizActivity extends AppCompatActivity {
         textViewCategory = findViewById(R.id.text_view_category);
         textViewDifficulty = findViewById(R.id.text_view_difficulty);
         textViewCountDown = findViewById(R.id.text_view_countdown);
+
         rbGroup = findViewById(R.id.radio_group);
         rb1 = findViewById(R.id.radio_button1);
         rb2 = findViewById(R.id.radio_button2);
@@ -58,6 +64,7 @@ public class QuizActivity extends AppCompatActivity {
         int categoryID = intent.getIntExtra(StartingScreenActivity.EXTRA_CATEGORY_ID, 0);
         String categoryName = intent.getStringExtra(StartingScreenActivity.EXTRA_CATEGORY_NAME);
         String difficulty = intent.getStringExtra(StartingScreenActivity.EXTRA_DIFFICULTY);
+
 
         textViewCategory.setText("Category: " + categoryName);
         textViewDifficulty.setText("Difficulty: " + difficulty);

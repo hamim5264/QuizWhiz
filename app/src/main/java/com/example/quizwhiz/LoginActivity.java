@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextName, editTextEmail;
-    private Button buttonSignupStudent, buttonSignupTeacher, buttonLogin;
+    private Button buttonSignupStudent, buttonSignupTeacher, buttonLoginStudent, buttonLoginTeacher;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -25,19 +25,14 @@ public class LoginActivity extends AppCompatActivity {
         editTextEmail = findViewById(R.id.editTextEmail);
         buttonSignupStudent = findViewById(R.id.buttonSignupStudent);
         buttonSignupTeacher = findViewById(R.id.buttonSignupTeacher);
-        buttonLogin = findViewById(R.id.buttonLogin);
+        buttonLoginStudent = findViewById(R.id.buttonLoginStudent);
+        buttonLoginTeacher = findViewById(R.id.buttonLoginTeacher);
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
 
-        // Check if user is already logged in
-        String storedName = sharedPreferences.getString("name", "");
-        String storedEmail = sharedPreferences.getString("email", "");
-        String userType = sharedPreferences.getString("userType", "");
-
-        if (!storedName.isEmpty() && !storedEmail.isEmpty()) {
-            autoLogin(userType);
-        }
+        // Check if a user is already logged in
+        checkLoggedInUser();
 
         // Sign up as Student
         buttonSignupStudent.setOnClickListener(v -> saveUserData("student"));
@@ -45,8 +40,11 @@ public class LoginActivity extends AppCompatActivity {
         // Sign up as Teacher
         buttonSignupTeacher.setOnClickListener(v -> saveUserData("teacher"));
 
-        // Log in
-        buttonLogin.setOnClickListener(v -> loginUser());
+        // Log in as Student
+        buttonLoginStudent.setOnClickListener(v -> loginUser("student"));
+
+        // Log in as Teacher
+        buttonLoginTeacher.setOnClickListener(v -> loginUser("teacher"));
     }
 
     private void saveUserData(String userType) {
@@ -58,25 +56,23 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Check if user already exists
+        String existingUserType = sharedPreferences.getString(name + ":" + email, "");
+        if (!existingUserType.isEmpty()) {
+            Toast.makeText(this, "This user already exists as " + existingUserType + ".", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Save user data persistently
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("name", name);
-        editor.putString("email", email);
-        editor.putString("userType", userType);
+        editor.putString(name + ":" + email, userType); // Store user in database
         editor.apply();
 
-        autoLogin(userType);
+        Toast.makeText(this, "Sign-up successful!", Toast.LENGTH_SHORT).show();
+        clearFields();
     }
 
-    private void autoLogin(String userType) {
-        if (userType.equals("student")) {
-            startActivity(new Intent(this, StartingScreenActivity.class));
-        } else if (userType.equals("teacher")) {
-            startActivity(new Intent(this, TeacherDashboardActivity.class));
-        }
-        finish();
-    }
-
-    private void loginUser() {
+    private void loginUser(String userType) {
         String name = editTextName.getText().toString().trim();
         String email = editTextEmail.getText().toString().trim();
 
@@ -85,15 +81,47 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String storedName = sharedPreferences.getString("name", "");
-        String storedEmail = sharedPreferences.getString("email", "");
-        String userType = sharedPreferences.getString("userType", "");
+        String storedUserType = sharedPreferences.getString(name + ":" + email, "");
+        if (storedUserType.equals(userType)) {
+            // Save the current user details persistently
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("current_user_name", name);
+            editor.putString("current_user_email", email);
+            editor.putString("current_user_role", userType);
+            editor.apply();
 
-        if (name.equals(storedName) && email.equals(storedEmail)) {
-            autoLogin(userType);
+            if (userType.equals("student")) {
+                startActivity(new Intent(this, StartingScreenActivity.class));
+            } else if (userType.equals("teacher")) {
+                startActivity(new Intent(this, TeacherDashboardActivity.class));
+            }
+            finish();
         } else {
-            Toast.makeText(this, "Invalid credentials. Please try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid credentials or user type.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void checkLoggedInUser() {
+        String name = sharedPreferences.getString("current_user_name", null);
+        String email = sharedPreferences.getString("current_user_email", null);
+        String role = sharedPreferences.getString("current_user_role", null);
+
+        if (name != null && email != null && role != null) {
+            if (role.equals("student")) {
+                startActivity(new Intent(this, StartingScreenActivity.class));
+            } else if (role.equals("teacher")) {
+                startActivity(new Intent(this, TeacherDashboardActivity.class));
+            }
+            finish();
+        }
+    }
+
+    private void clearFields() {
+        editTextName.setText("");
+        editTextEmail.setText("");
     }
 }
 //The Data Engineer's@hamim leon
+
+
+

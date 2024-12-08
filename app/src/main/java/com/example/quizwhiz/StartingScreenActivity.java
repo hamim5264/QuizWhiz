@@ -32,7 +32,7 @@ public class StartingScreenActivity extends AppCompatActivity {
         spinnerCategory = findViewById(R.id.spinner_category);
         spinnerDifficulty = findViewById(R.id.spinner_difficulty);
         buttonStartQuiz = findViewById(R.id.button_start_quiz);
-        buttonLogout = findViewById(R.id.button_log_out);
+        Button buttonLogout = findViewById(R.id.button_log_out);
         textViewHighScore = findViewById(R.id.text_view_highScore);
 
         loadCategories();
@@ -100,9 +100,17 @@ public class StartingScreenActivity extends AppCompatActivity {
 
     private void logout() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        sharedPreferences.edit().clear().apply();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("current_user_name");
+        editor.remove("current_user_email");
+        editor.remove("current_user_role");
+        editor.apply();
+
+        // Navigate back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
+
+
 }
 //The Data Engineer's@hamim leon
