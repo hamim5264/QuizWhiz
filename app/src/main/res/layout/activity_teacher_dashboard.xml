@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp"> <!-- Align content to center horizontally -->
+
+        <TextView
+            android:id="@+id/text_view_quizwhiz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Welcome To Teacher Dashboard"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_add_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Add Question"
+            android:textColor="@android:color/white"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="#F44336"
+            android:text="Logout"
+            android:textColor="@android:color/white"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,133 +1,107 @@
 package com.example.quizwhiz;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log; // Import for logging
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
 public class StartingScreenActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_QUIZ = 1;
-    public static final String EXTRA_CATEGORY_ID = "extraCategoryID";
-    public static final String EXTRA_CATEGORY_NAME = "extraCategoryName";
-    public static final String EXTRA_DIFFICULTY = "extraDifficulty";
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String KEY_HIGHSCORE = "keyHighScore";
-    private TextView textViewHighScore;
-    private Spinner spinnerCategory;
-    private Spinner spinnerDifficulty;
-    private int highscore;
 
-    @SuppressLint("MissingInflatedId")
+    public static final String EXTRA_CATEGORY_ID = "categoryID";
+    public static final String EXTRA_CATEGORY_NAME = "categoryName";
+    public static final String EXTRA_DIFFICULTY = "difficulty";
+
+    private Spinner spinnerCategory, spinnerDifficulty;
+    private Button buttonStartQuiz, buttonLogout;
+    private TextView textViewHighScore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewHighScore = findViewById(R.id.text_view_highScore);
+        // Initialize views
         spinnerCategory = findViewById(R.id.spinner_category);
         spinnerDifficulty = findViewById(R.id.spinner_difficulty);
+        buttonStartQuiz = findViewById(R.id.button_start_quiz);
+        buttonLogout = findViewById(R.id.button_log_out);
+        textViewHighScore = findViewById(R.id.text_view_highScore);
+
         loadCategories();
         loadDifficultyLevels();
-        loadHighScore();
+        loadScores(); // Load scores on start
 
-        Button buttonStartQuiz = findViewById(R.id.button_start_quiz);
         buttonStartQuiz.setOnClickListener(v -> startQuiz());
-
-        Button buttonAddQuestion = findViewById(R.id.button_add_question);
-        buttonAddQuestion.setOnClickListener(v -> {
-            Intent intent = new Intent(StartingScreenActivity.this, AddQuestionActivity.class);
-            startActivity(intent);
-        });
-
-        //Set up the Log Out button
-        Button buttonLogOut = findViewById(R.id.button_log_out);
-        buttonLogOut.setOnClickListener(v -> {
-            logOut();
-            Log.d("StartingScreenActivity", "Log Out button clicked");
-        });
-    }
-
-    private void startQuiz() {
-        Category selectedCategory = (Category) spinnerCategory.getSelectedItem();
-        int categoryID = selectedCategory.getId();
-        String categoryName = selectedCategory.getName();
-        String difficulty = spinnerDifficulty.getSelectedItem().toString();
-        Intent intent = new Intent(StartingScreenActivity.this, QuizActivity.class);
-        intent.putExtra(EXTRA_CATEGORY_ID, categoryID);
-        intent.putExtra(EXTRA_CATEGORY_NAME, categoryName);
-        intent.putExtra(EXTRA_DIFFICULTY, difficulty);
-        startActivityForResult(intent, REQUEST_CODE_QUIZ);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_QUIZ) {
-            if (resultCode == RESULT_OK) {
-                int score = data.getIntExtra(QuizActivity.EXTRA_SCORE, 0);
-                if (score > highscore) {
-                    updateHighScore(score);
-                }
-            }
-        }
+        buttonLogout.setOnClickListener(v -> logout());
     }
 
     private void loadCategories() {
-        QuizDbHelper dbHelper = QuizDbHelper.getInstance(this);
-        List<Category> categories = dbHelper.getAllCategories();
-        ArrayAdapter<Category> adapterCategories = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, categories);
-        adapterCategories.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(adapterCategories);
+        List<Category> categories = QuizDbHelper.getInstance(this).getAllCategories();
+        if (categories.isEmpty()) {
+            Toast.makeText(this, "No categories available. Please contact your teacher.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ArrayAdapter<Category> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
     }
 
     private void loadDifficultyLevels() {
-        String[] difficultyLevels = Question.getAllDifficultyLevels();
-
-        ArrayAdapter<String> adapterDifficulty = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, difficultyLevels);
-        adapterDifficulty.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        spinnerDifficulty.setAdapter(adapterDifficulty);
+        String[] difficulties = Question.getAllDifficultyLevels();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, difficulties);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDifficulty.setAdapter(adapter);
     }
 
-    @SuppressLint("SetTextI18n")
-    private void loadHighScore() {
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        highscore = prefs.getInt(KEY_HIGHSCORE, 0);
-        textViewHighScore.setText("HighScore: " + highscore);
+    private void loadScores() {
+        SharedPreferences sharedPreferences = getSharedPreferences("quiz_data", MODE_PRIVATE);
+
+        // Retrieve scores
+        int highScore = sharedPreferences.getInt("high_score", 0);
+        int latestScore = sharedPreferences.getInt("latest_score", 0);
+
+        // Update the TextView
+        textViewHighScore.setText("Latest Score: " + latestScore + " | HighScore: " + highScore);
     }
 
-    @SuppressLint("SetTextI18n")
-    private void updateHighScore(int highScoreNew) {
-        highscore = highScoreNew;
-        textViewHighScore.setText("HighScore: " + highscore);
+    private void startQuiz() {
+        Category category = (Category) spinnerCategory.getSelectedItem();
+        String difficulty = spinnerDifficulty.getSelectedItem().toString();
 
-        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(KEY_HIGHSCORE, highscore);
-        editor.apply();
+        if (category == null || difficulty.isEmpty()) {
+            Toast.makeText(this, "Please select a category and difficulty level!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, QuizActivity.class);
+        intent.putExtra(EXTRA_CATEGORY_ID, category.getId());
+        intent.putExtra(EXTRA_CATEGORY_NAME, category.getName());
+        intent.putExtra(EXTRA_DIFFICULTY, difficulty);
+        startActivityForResult(intent, 1); // Use startActivityForResult
     }
 
-    private void logOut() {
-        // Clear the login state from SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("login_pref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("is_logged_in", false);
-        editor.apply();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        // Redirect to the login activity
-        Intent intent = new Intent(StartingScreenActivity.this, LoginActivity.class);
-        startActivity(intent);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            loadScores(); // Reload scores after finishing the quiz
+        }
+    }
+
+    private void logout() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 }

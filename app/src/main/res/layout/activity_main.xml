@@ -73,28 +73,17 @@
         android:layout_alignStart="@+id/button_start_quiz"
         android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/button_add_question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/spinner_difficulty"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:background="#8bc34a"
-        android:text="Add Question"
-        android:textColor="@android:color/black"
-        tools:ignore="HardcodedText" />
 
     <!--    log out button added-->
     <Button
         android:id="@+id/button_log_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_add_question"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_below="@+id/button_start_quiz"
+        android:layout_marginTop="97dp"
         android:background="#F44336"
         android:text="Log Out"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        tools:ignore="HardcodedText" />
 
 </RelativeLayout>

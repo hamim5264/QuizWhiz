@@ -10,7 +10,7 @@
         android:id="@+id/edit_text_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Question"
+        android:hint="Enter question"
         tools:ignore="Autofill,HardcodedText,TextFields" />
 
     <EditText
@@ -38,24 +38,27 @@
         android:id="@+id/edit_text_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select Answer Number (1, 2, or 3)"
-        tools:ignore="Autofill,HardcodedText,TextFields" />
+        android:hint="Correct answer (1-3)"
+        android:inputType="number"
+        tools:ignore="Autofill,HardcodedText" />
 
     <Spinner
         android:id="@+id/spinner_difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginTop="16dp" />
 
     <Spinner
         android:id="@+id/spinner_category"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/button_add_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Add Question"
         tools:ignore="HardcodedText" />
 
