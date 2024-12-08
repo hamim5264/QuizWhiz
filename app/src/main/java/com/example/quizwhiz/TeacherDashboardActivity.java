@@ -43,4 +43,4 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         finish();
     }
 }
-//The Data Engineer's@hamim leon
+//The Data Engineer's@hamim leon all copy rights reserved.
