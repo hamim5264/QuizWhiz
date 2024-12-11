@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         // Initialize buttons
         buttonAddQuestion = findViewById(R.id.button_add_question);
         Button buttonLogout = findViewById(R.id.button_logout);
+        Button buttonClearQuestions = findViewById(R.id.button_clear_questions); // New button
 
         // Add question button
         buttonAddQuestion.setOnClickListener(v -> {
@@ -26,9 +28,20 @@ public class TeacherDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Clear questions button
+        buttonClearQuestions.setOnClickListener(v -> clearAllQuestions());
+
         // Logout button
         buttonLogout.setOnClickListener(v -> logout());
     }
+
+    // Method to clear all questions
+    private void clearAllQuestions() {
+        QuizDbHelper dbHelper = QuizDbHelper.getInstance(this);
+        dbHelper.clearQuestions(); // Call the method to clear questions from the database
+        Toast.makeText(this, "All questions have been removed!", Toast.LENGTH_SHORT).show();
+    }
+
     private void logout() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

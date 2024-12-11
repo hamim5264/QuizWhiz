@@ -182,5 +182,11 @@ public class QuizDbHelper extends SQLiteOpenHelper {
         c.close();
         return questionList;
     }
+
+    // Method to clear all questions
+    public void clearQuestions() {
+        db = getWritableDatabase();
+        db.delete(QuestionsTable.TABLE_NAME, null, null); // Delete all rows in the questions table
+    }
 }
 //The Data Engineer's@hamim leon

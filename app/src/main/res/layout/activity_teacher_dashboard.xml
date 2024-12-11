@@ -42,6 +42,16 @@
             android:text="Logout"
             android:textColor="@android:color/white"
             tools:ignore="HardcodedText" />
+        <Button
+            android:id="@+id/button_clear_questions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorPrimary"
+            android:text="Clear All Questions"
+            android:textColor="@android:color/white"
+            tools:ignore="HardcodedText" />
+
 
     </LinearLayout>
 

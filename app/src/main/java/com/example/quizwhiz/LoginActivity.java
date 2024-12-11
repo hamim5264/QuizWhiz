@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText editTextName, editTextEmail;
+    private EditText editTextName, editTextEmail, editTextPassword;
     private Button buttonSignupStudent, buttonSignupTeacher, buttonLoginStudent, buttonLoginTeacher;
     private SharedPreferences sharedPreferences;
 
@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize views
         editTextName = findViewById(R.id.editTextName);
         editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
         buttonSignupStudent = findViewById(R.id.buttonSignupStudent);
         buttonSignupTeacher = findViewById(R.id.buttonSignupTeacher);
         buttonLoginStudent = findViewById(R.id.buttonLoginStudent);
@@ -50,22 +51,22 @@ public class LoginActivity extends AppCompatActivity {
     private void saveUserData(String userType) {
         String name = editTextName.getText().toString().trim();
         String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
 
-        if (name.isEmpty() || email.isEmpty()) {
-            Toast.makeText(this, "Please fill in both fields.", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check if user already exists
         String existingUserType = sharedPreferences.getString(name + ":" + email, "");
         if (!existingUserType.isEmpty()) {
             Toast.makeText(this, "This user already exists as " + existingUserType + ".", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Save user data persistently
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(name + ":" + email, userType); // Store user in database
+        editor.putString(name + ":" + email, userType);
+        editor.putString(name + ":" + email + ":password", password); // Save password
         editor.apply();
 
         Toast.makeText(this, "Sign-up successful!", Toast.LENGTH_SHORT).show();
@@ -75,15 +76,17 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser(String userType) {
         String name = editTextName.getText().toString().trim();
         String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
 
-        if (name.isEmpty() || email.isEmpty()) {
-            Toast.makeText(this, "Please fill in both fields.", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String storedUserType = sharedPreferences.getString(name + ":" + email, "");
-        if (storedUserType.equals(userType)) {
-            // Save the current user details persistently
+        String storedPassword = sharedPreferences.getString(name + ":" + email + ":password", "");
+
+        if (storedUserType.equals(userType) && storedPassword.equals(password)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("current_user_name", name);
             editor.putString("current_user_email", email);
@@ -100,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid credentials or user type.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void checkLoggedInUser() {
         String name = sharedPreferences.getString("current_user_name", null);
@@ -119,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
     private void clearFields() {
         editTextName.setText("");
         editTextEmail.setText("");
+        editTextPassword.setText("");
     }
 }
 //The Data Engineer's@hamim leon
